@@ -61,7 +61,7 @@ Replace `<playlist_link>` with the actual Spotify playlist link.
 python spoti-tube.py https://open.spotify.com/playlist/your_playlist_id
 ```
 
-2. Enter the Spotify playlist link when prompted, and let Spoti-Tube handle the rest.
+2. Let Spoti-Tube handle the rest.
 
 3. Spoti-Tube will then fetch the playlist information and search for corresponding songs on YouTube.
 
