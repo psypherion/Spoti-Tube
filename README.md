@@ -24,7 +24,7 @@ Before using Spoti-Tube, you need to set up your environment by following these 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/spoti-tube.git
+   git clone https://github.com/ky13-troj/Spoti-Tube.git
    cd spoti-tube
    ```
 
