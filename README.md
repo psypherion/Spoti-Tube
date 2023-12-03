@@ -15,6 +15,7 @@ Spoti-Tube is a Python script that allows you to download songs from a given Spo
 ### Note:
 
 - **Spotify Access Tokens:** For initial usage, you can use my access tokens but to get your own personal access tokens [visit](https://developer.spotify.com/documentation/web-api)
+- **First Use:** While using it for the first time a youtube authentication will be initiated in case of any explicit songs. To authorize your YT account you've to go to the prompted link in the terminal & paste the code prompted in the terminal. This will be a one-time thing only. Also, I'm trying to remove this issue if anyone knows how to resolve this issue kindly contact me
 
 Enjoy your seamless journey from Spotify playlists to local MP3s with Spoti-Tube!
 ## Setup
