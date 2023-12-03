@@ -56,4 +56,4 @@ Please be aware that downloading copyrighted material without permission may vio
 
 ---
 
-Feel free to contribute to the project or report any issues on the [GitHub repository](https://github.com/yourusername/spoti-tube).
+Feel free to contribute to the project or report any issues on the [GitHub repository](https://github.com/ky13-troj/spoti-tube).
