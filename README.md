@@ -46,9 +46,9 @@ Before using Spoti-Tube, you need to set up your environment by following these 
 
 ## Usage
 
-### Execution
+### 1. Execution
 
-1. Run the Spoti-Tube script by providing the Spotify playlist link as a command-line argument:
+Run the Spoti-Tube script by providing the Spotify playlist link as a command-line argument:
 
 ```bash
 python spoti-tube.py <playlist_link>
