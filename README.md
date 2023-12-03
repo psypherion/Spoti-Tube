@@ -15,7 +15,7 @@ Spoti-Tube is a Python script that allows you to download songs from a given Spo
 
 **GitHub Repository:** [Spoti-Tube on GitHub](https://github.com/yourusername/spoti-tube)
 
--- For initial usage, you can use my access tokens but to get your own personal access tokens [visit](https://developer.spotify.com/documentation/web-api)
+- **Spotify Access Tokens:** For initial usage, you can use my access tokens but to get your own personal access tokens [visit](https://developer.spotify.com/documentation/web-api)
 
 Enjoy your seamless journey from Spotify playlists to local MP3s with Spoti-Tube!
 ## Setup
