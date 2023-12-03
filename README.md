@@ -12,8 +12,7 @@ Spoti-Tube is a Python script that allows you to download songs from a given Spo
 
 - **Error Handling:** Spoti-Tube gracefully handles errors during the download process, ensuring a smooth experience even in the face of occasional issues.
 
-
-**GitHub Repository:** [Spoti-Tube on GitHub](https://github.com/yourusername/spoti-tube)
+### Note:
 
 - **Spotify Access Tokens:** For initial usage, you can use my access tokens but to get your own personal access tokens [visit](https://developer.spotify.com/documentation/web-api)
 
