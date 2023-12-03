@@ -6,6 +6,7 @@ import json
 import urllib.request
 import re
 import pytube
+import sys
 load_dotenv()
 
 client_id = os.getenv("CLIENT_ID")
@@ -115,7 +116,7 @@ def Download(link):
     
 if __name__ == "__main__":
     token = get_token()
-    playlist_link = input("Enter a Playlist Link : ")
+    playlist_link = sys.argv[1]
     playlist_id = list_id(playlist_link)
     playlist_dict = get_playlist(token, playlist_id=playlist_id)
     playlist_name = playlist_dict["name"]
