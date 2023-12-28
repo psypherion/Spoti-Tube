@@ -1,3 +1,4 @@
+gunicorn
 httptools
 python-dotenv
 pytube
