@@ -1,8 +1,8 @@
-httptools==0.6.0
-python-dotenv==0.21.1
-pytube==15.0.0
-PyYAML==6.0.1
-requests==2.31.0
-urllib3==2.0.7
-Flask==2.2.5
-Flask-Dance==7.0.0
+httptools
+python-dotenv
+pytube
+PyYAML
+requests
+urllib3
+flask
+flask_dance
