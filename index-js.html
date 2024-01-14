@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Download</title>
+</head>
+<body>
+    <h1>Files in Directory</h1>
+    <form action="{{ url_for('download_selected') }}" method="post">
+        <ul>
+            <li>
+                <label><input type="checkbox" id="select-all"> Select All</label>
+            </li>
+            {% for file in files %}
+                <li>
+                    <label><input type="checkbox" name="selected_files" value="{{ file }}"> {{ file }}</label>
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit" id="download-selected" disabled>Download Selected</button>
+    </form>
+
+    <script>
+        document.getElementById('select-all').addEventListener('change', function () {
+            var checkboxes = document.getElementsByName('selected_files');
+            var downloadButton = document.getElementById('download-selected');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = this.checked;
+            }
+            downloadButton.disabled = !this.checked;
+        });
+
+        var checkboxes = document.getElementsByName('selected_files');
+        var downloadButton = document.getElementById('download-selected');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].addEventListener('change', function () {
+                var checkedCheckboxes = document.querySelectorAll('input[name="selected_files"]:checked');
+                downloadButton.disabled = checkedCheckboxes.length === 0;
+            });
+        }
+    </script>
+</body>
+</html>
