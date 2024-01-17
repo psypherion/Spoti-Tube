@@ -86,6 +86,14 @@ Please be aware that downloading copyrighted material without permission may vio
 
 Feel free to contribute to the project or report any issues on the [GitHub repository](https://github.com/ky13-troj/spoti-tube).
 
+**Commit Changes:**
+- Implemented object-oriented structure for SpotiTube script in spoti_tube_class.py.
+- Created classes for SpotifyDownloader, PlaylistDownloader, AudioDownloader, and SpotifyPlaylistProcessor.
+- Encapsulated functionalities for Spotify API interaction, playlist details extraction, YouTube queries generation, and audio downloading.
+- Improved modularity, readability, and maintainability of the codebase.
+- Enhanced object-oriented design for SpotiTube script, fostering better code organization.
+
+
 # Future Visions of Spoti-Tube
 
 ## 1. **Creation of a Python API:**
