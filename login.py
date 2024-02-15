@@ -1,20 +1,22 @@
 import requests
-import json
-from flask import Flask, render_template, request, jsonify, redirect, url_for, send_file, session
+from flask import Flask, request, jsonify, redirect, session, render_template
 import os
 import urllib.parse
 from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+import io
+import base64
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-client_id = os.getenv("CLIENT_ID")
-client_secret = os.getenv("CLIENT_SECRET")
+client_id = '4d883b68243a4c37aed440eb6228bab3'
+client_secret = '2b5bf4c12d864fe3b868af0a537c9e02'
 
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 API_BASE_URL = "https://api.spotify.com/v1/"
 REDIRECT_URI = "http://127.0.0.1:5000/callback"
-SPOTIFY_SCOPES = 'user-read-private user-read-email playlist-read-private'
+
 
 @app.route('/')
 def index():
@@ -22,9 +24,11 @@ def index():
 
 @app.route('/login')
 def login():
+    SPOTIFY_SCOPES = 'user-top-read'
+    
     params = {
         "client_id": client_id,
-        "response_type": "code",
+        "response_type": 'code',
         "redirect_uri": REDIRECT_URI,
         "scope": SPOTIFY_SCOPES,
         "show_dialog": True
@@ -53,14 +57,18 @@ def callback():
         
         session['access_token']= token_info['access_token']
         session['refresh_token'] = token_info['refresh_token']
-        session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
+        session['expires_at'] = datetime.now().timestamp() + 10
         
-        return redirect('/playlists')
+        return redirect('/top_genres')
 
 @app.route('/playlists')
-def playlists():
+def get_playlists():
     if "access_token" not in session:
         return redirect('/login')
+    
+    if datetime.now().timestamp() > session['expires_at']:
+        print("refreshing token")
+        return redirect('/refresh_token')
     
     headers = {
         "Authorization": f"Bearer {session['access_token']}"
@@ -78,22 +86,155 @@ def refresh_token():
     if "refresh_token" not in session:
         return redirect('/login')
     
-    req_body = {
-        "grant_type" : "refresh_token",
-        "refresh_token" : session['refresh_token'],
-        "client_id" : client_id,
-        "client_secret" : client_secret
+    if datetime.now().timestamp() > session['expires_at']:
+        print("refreshing token")
+        req_body = {
+            "grant_type" : "refresh_token",
+            "refresh_token" : session['refresh_token'],
+            "client_id" : client_id,
+            "client_secret" : client_secret
+        }
+    
+        response = requests.post(TOKEN_URL, data=req_body)
+        new_token_info = response.json()
+        
+        session['access_token']= new_token_info['access_token']
+        session['expires_at'] = datetime.now().timestamp() + 10
+    
+        return redirect('/playlists')
+
+
+@app.route('/available_genres')
+def get_available_genres():
+    if "access_token" not in session:
+        return redirect('/login')
+    
+    if datetime.now().timestamp() > session['expires_at']:
+        print("refreshing token")
+        return redirect('/refresh_token')
+    
+    headers = {
+        "Authorization": f"Bearer {session['access_token']}"
     }
     
-    response = requests.post(TOKEN_URL, data=req_body)
-    new_token_info = response.json()
+    # Get available genre seeds
+    response_genres_seeds = requests.get(API_BASE_URL + "recommendations/available-genre-seeds", headers=headers)
+    available_genres = response_genres_seeds.json()["genres"]
     
-    session['access_token']= new_token_info['access_token']
-    session['refresh_token'] = new_token_info['refresh_token']
-    session['expires_at'] = datetime.now().timestamp() + new_token_info['expires_in']
-    
-    return redirect('/playlists')
+    return jsonify({"available_genres": available_genres})
 
+@app.route('/top_tracks')
+def get_tracks():
+    if "access_token" not in session:
+        return redirect('/login')
+    
+    if datetime.now().timestamp() > session['expires_at']:
+        print("refreshing token")
+        return redirect('/refresh_token')
+    
+    headers = {
+        "Authorization": f"Bearer {session['access_token']}"
+    }
+    
+    # Get available genre seeds
+    response_genres_seeds = requests.get(API_BASE_URL + "me/top/tracks", headers=headers)
+    available_genres = response_genres_seeds.json()
+    print(available_genres["items"][0]["name"])
+    top_songs = available_genres["items"]
+    top = []
+    for i in range(0, 19):
+        print(top_songs[i]["name"])
+        top.append(top_songs[i]["name"])
+    
+    return top
+
+@app.route('/top_artists')
+def top_artists():
+    if "access_token" not in session:
+        return redirect('/login')
+    
+    if datetime.now().timestamp() > session['expires_at']:
+        print("refreshing token")
+        return redirect('/refresh_token')
+    
+    headers = {
+        "Authorization": f"Bearer {session['access_token']}"
+    }
+
+    response_top_artists = requests.get(API_BASE_URL + "me/top/artists", headers=headers)
+    top_artists = response_top_artists.json()
+
+    artists = top_artists["items"]
+    top = []
+    for i in range(0, 19):
+        print(artists[i]["name"])
+        top.append(artists[i]["name"])
+    
+    return top
+
+@app.route('/top_genres')
+def top_genres():
+    if "access_token" not in session:
+        return redirect('/login')
+    
+    if datetime.now().timestamp() > session['expires_at']:
+        print("refreshing token")
+        return redirect('/refresh_token')
+    
+    headers = {
+        "Authorization": f"Bearer {session['access_token']}"
+    }
+
+    response_top_genres = requests.get(API_BASE_URL + "me/top/artists", headers=headers)
+    
+    if response_top_genres.status_code == 200:
+        top_genres_data = response_top_genres.json()
+        items = top_genres_data["items"]
+        top = []
+        for i in range(0, 19):
+            print(items[i]["genres"])
+            top.append(items[i]["genres"])
+        genres = [item for sublist in top for item in sublist]  
+        
+        # genre counts :
+        genre_counts = {}
+        for genre in genres:
+            if genre in genre_counts:
+                genre_counts[genre] += 1
+            else:
+                genre_counts[genre] = 1
+        
+        # genre counts sorted 
+        sorted_genres = sorted(genre_counts.items(), key=lambda x: x[1], reverse=True)
+        
+        # first ten genres percentage
+        total_count = sum([count for genre, count in sorted_genres[:10]])
+        first_ten_percentage = [(genre, round(count/total_count*100)) for genre, count in sorted_genres[:10]]
+        labels = [genre[0] for genre in first_ten_percentage]
+        values = [genre[1] for genre in first_ten_percentage]
+        
+        print(values)
+        print(labels)
+        # Creating the pie chart
+        fig, ax = plt.subplots()
+        ax.pie(values, labels=labels, autopct='%1.1f%%', startangle=90)
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle
+
+        # Saving the plot to a BytesIO object
+        img_buf = io.BytesIO()
+        plt.savefig(img_buf, format='png')
+        img_buf.seek(0)
+
+        # Encoding the image as base64 for embedding in HTML
+        img_base64 = base64.b64encode(img_buf.getvalue()).decode('utf-8')
+
+        # Generating HTML with embedded image
+        html = f'<img src="data:image/png;base64,{img_base64}" alt="Top Genres Pie Chart">'
+    
+        return html
+    
+    else:
+        return jsonify({"error": "Failed to fetch top genres", "status_code": response_top_genres.status_code})
 
 
 if __name__ == '__main__':
