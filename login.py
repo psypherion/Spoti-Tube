@@ -67,10 +67,10 @@ def playlists():
     }
     
     response = requests.get(API_BASE_URL + "me/playlists", headers=headers)
-    # playlists = response.json()
+    playlists = response.json()
     print(response)
     
-    return "0"
+    return jsonify(playlists)
 
 
 @app.route('/refresh_token')
