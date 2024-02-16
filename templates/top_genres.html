@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Genres</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #030303;
+        }
+
+        header {
+            background-color: #333;
+            color: rgba(87, 153, 33, 0.473);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        section {
+            margin: 1rem; /* Reduced margin */
+            background-color: rgba(155, 137, 137, 0.233);
+            padding: 1rem; /* Reduced padding */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        img {
+            display: block;
+            margin: auto;
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #41c521b7;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left; /* Align text left */
+            margin-top: 1rem;
+        }
+
+        li {
+            margin: 0.5rem;
+            background-color: #0ff038f3;
+            padding: 0.5rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center; /* Align items vertically */
+            text-align: left;
+        }
+
+        .artist-image {
+            border-radius: 50%;
+            width: 40px; /* Adjusted size */
+            height: 40px; /* Adjusted size */
+            object-fit: cover;
+            margin-left: 0.5rem; /* Reduced spacing */
+            margin-right: 0.5rem; /* Reduced spacing */
+        }
+
+        .artist-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .artist-item {
+            margin: 0.5rem; /* Reduced margin */
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .flex-container>div {
+            flex: 1;
+            margin: 0 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+
+    </header>
+
+    <section>
+        <h1>Top Genres</h1>
+        <img src="data:image/png;base64,{{ img_base64 }}" alt="Top Genres Pie Chart">
+    </section>
+
+    <section class="flex-container">
+        <div>
+            <h1>Top Artists</h1>
+            <ul>
+                {% for i in range(0, top_artists|length) %}
+                <li>
+                    <img src="{{ image_urls[i] }}" alt="{{ top_artists[i] }}" class="artist-image">
+                    <a href="{{ artists_urls[i] }}" style="color: #000; text-decoration: none;">{{ top_artists[i] }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h1>Top Tracks</h1>
+            <ul>
+                {% for i in range(0, top_tracks|length) %}
+                <li>
+                    <a href="{{ track_urls[i] }}" style="color: #000; text-decoration: none;">{{ top_tracks[i] }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+</body>
+
+</html>

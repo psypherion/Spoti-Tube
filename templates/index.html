@@ -1,52 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SpotiTube</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
 
     <!-- Include the Google Sign-In API script -->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
 
     <!-- Add the Google Sign-In meta tag -->
-    <meta name="google-signin-client_id" content="322111399517-cb0k7tq4diknd1o74r7iodu96p698mj6.apps.googleusercontent.com">
-</head>
-<body>
+    <meta
+      name="google-signin-client_id"
+      content="322111399517-cb0k7tq4diknd1o74r7iodu96p698mj6.apps.googleusercontent.com"
+    />
+  </head>
+  <body>
     <div class="container">
-        <h1>SpotiTube</h1>
+      <h1>SpotiTube</h1>
 
-        {% if google.authorized %}
-            {% if google.me and google.me.data %}
-                <!-- Show user information if authenticated -->
-                <p>Hello, {{ google.me.data["displayName"] }}!</p>
-            {% else %}
-                <!-- Show a generic message if user information is not available -->
-                <p>Hello, authenticated user!</p>
-            {% endif %}
-            <a href="{{ url_for('google_logout') }}">Sign out</a>
-        {% else %}
-            <!-- Show Google Sign-In button if not authenticated -->
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
-            <a href="{{ url_for('google_login') }}">Login with Google</a>
-        {% endif %}
+      {% if google.authorized %} {% if google.me and google.me.data %}
+      <!-- Show user information if authenticated -->
+      <p>Hello, {{ google.me.data["displayName"] }}!</p>
+      {% else %}
+      <!-- Show a generic message if user information is not available -->
+      <p>Hello, authenticated user!</p>
+      {% endif %}
+      <a href="{{ url_for('google_logout') }}">Sign out</a>
+      {% else %}
+      <!-- Show Google Sign-In button if not authenticated -->
+      <button onclick="window.location='{{ url_for('google_login') }}'">
+        Login with Google
+      </button>
+      {% endif %}
 
-        <p>Enter your Spotify playlist link below:</p>
-        <form id="playlistForm">
-            <input type="text" id="playlistLink" placeholder="https://open.spotify.com/playlist/your_playlist_id" required>
-            <button type="button" onclick="submitPlaylist()">Download</button>
-        </form>
-        <div id="result"></div>
+      <p>Enter your Spotify playlist link below:</p>
+      <form id="playlistForm">
+        <input
+          type="text"
+          id="playlistLink"
+          placeholder="https://open.spotify.com/playlist/your_playlist_id"
+          required
+        />
+        <br /><br />
+        <button type="button" onclick="submitPlaylist()">Download</button>
+      </form>
+      <div id="result"></div>
+
+      <!-- Add a button to trigger the download -->
+      <button id="downloadBtn">Download Songs</button>
+      <script>
+        document
+          .getElementById("downloadBtn")
+          .addEventListener("click", function () {
+            window.location.href = "/download";
+          });
+      </script>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
     <!-- JavaScript function to handle Google Sign-In callback -->
     <script>
-        function onSignIn(googleUser) {
-            // You can perform additional actions here if needed
-            console.log('Signed in as: ' + googleUser.getBasicProfile().getName());
-        }
+      function onSignIn(googleUser) {
+        // You can perform additional actions here if needed
+        console.log("Signed in as: " + googleUser.getBasicProfile().getName());
+      }
     </script>
-</body>
+  </body>
 </html>
