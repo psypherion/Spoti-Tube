@@ -104,25 +104,6 @@ def refresh_token():
         return redirect('/playlists')
 
 
-@app.route('/available_genres')
-def get_available_genres():
-    if "access_token" not in session:
-        return redirect('/login')
-    
-    if datetime.now().timestamp() > session['expires_at']:
-        print("refreshing token")
-        return redirect('/refresh_token')
-    
-    headers = {
-        "Authorization": f"Bearer {session['access_token']}"
-    }
-    
-    # Get available genre seeds
-    response_genres_seeds = requests.get(API_BASE_URL + "recommendations/available-genre-seeds", headers=headers)
-    available_genres = response_genres_seeds.json()["genres"]
-    
-    return jsonify({"available_genres": available_genres})
-
 @app.route('/top_tracks')
 def get_tracks():
     if "access_token" not in session:
@@ -179,23 +160,44 @@ def top_genres():
     
     if datetime.now().timestamp() > session['expires_at']:
         print("refreshing token")
-        return redirect('/refresh_token')
-    
-    headers = {
-        "Authorization": f"Bearer {session['access_token']}"
-    }
+        refresh_token_url = f"{API_BASE_URL}me/top/artists?access_token={session['access_token']}"
+        response_top_genres = requests.get(refresh_token_url)
+    else:
+        headers = {
+            "Authorization": f"Bearer {session['access_token']}"
+        }
 
-    response_top_genres = requests.get(API_BASE_URL + "me/top/artists", headers=headers)
+        response_top_genres = requests.get(API_BASE_URL + "me/top/artists"
+                                           , headers=headers)
+        
+        response_top_tracks = requests.get(API_BASE_URL + "me/top/tracks"
+                                           , headers=headers)
+        
     
     if response_top_genres.status_code == 200:
         top_genres_data = response_top_genres.json()
+        top_tracks_data = response_top_tracks.json()
         items = top_genres_data["items"]
-        top = []
+        top_songs = top_tracks_data["items"]
+        top_genres = []
+        top_artists = []
+        top_tracks = []
+        image_urls = []  # Initialize image_urls here
+        test = top_genres_data
         for i in range(0, 19):
             print(items[i]["genres"])
-            top.append(items[i]["genres"])
-        genres = [item for sublist in top for item in sublist]  
+            top_genres.append(items[i]["genres"])
         
+        genres = [item for sublist in top_genres for item in sublist]
+        
+        for i in range(0, 19):
+            print(items[i]["name"])
+            top_artists.append(items[i]["name"])
+        
+        for i in range(0, 19):
+            print(top_songs[i]["name"])
+            top_tracks.append(top_songs[i]["name"])
+            
         # genre counts :
         genre_counts = {}
         for genre in genres:
@@ -228,14 +230,27 @@ def top_genres():
         # Encoding the image as base64 for embedding in HTML
         img_base64 = base64.b64encode(img_buf.getvalue()).decode('utf-8')
 
-        # Generating HTML with embedded image
-        html = f'<img src="data:image/png;base64,{img_base64}" alt="Top Genres Pie Chart">'
-    
-        return html
-    
+        for item in top_genres_data.get("items", []):
+            images = item.get("images", [])
+            if images and len(images) > 2:  # Check if there are images and at least 3 images are available
+                image_urls.append(images[2]["url"])
+
+        # Print the list of image URLs
+        print("Image URLs:")
+        for url in image_urls:
+            print(url)
+        
+        artists_urls = [item['external_urls']['spotify'] for item in top_genres_data['items']]
+        track_urls = [item['external_urls']['spotify'] for item in top_tracks_data['items']]
+
+        # Print the extracted Spotify URLs
+        for url in artists_urls:
+            print(url)
+            # Pass image_urls when rendering the template
+        return render_template('top_genres.html', img_base64=img_base64, top_artists=top_artists, top_tracks=top_tracks, top_genres=top_genres, image_urls=image_urls, artists_urls=artists_urls, track_urls=track_urls)
+        # return track_urls
     else:
         return jsonify({"error": "Failed to fetch top genres", "status_code": response_top_genres.status_code})
-
 
 if __name__ == '__main__':
     app.run(debug=True)
